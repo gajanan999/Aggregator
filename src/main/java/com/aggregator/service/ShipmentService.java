@@ -12,52 +12,57 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Service
-public class ShipmentService implements  ProcessingService{
+public class ShipmentService implements ProcessingService {
 
     private static Logger logger = LoggerFactory.getLogger(ShipmentService.class);
-    @Value("${SHIPMENT_PATH}")
-    private String shipmentPath;
-
     @Autowired
     RestTemplate restTemplate;
-
     @Autowired
     UrlUtility urlUtility;
 
     Set<String> queue = new HashSet<>();
+
     Map<String, List<String>> result = new HashMap<>();
 
     Timer timer = new Timer(this);
 
-
     ExecutorService executor = Executors.newSingleThreadExecutor();
+
     boolean notStarted = true;
+
+    @Value("${SHIPMENT_PATH}")
+    private String shipmentPath;
+
     public void submit(String input) {
         if (notStarted) {
             executor.submit(timer);
             notStarted = false;
         }
         queue.add(input);
-        if(queue.size() == 5)  {
+        if (queue.size() == 5) {
 
-           process(new HashSet<>(queue));
+            process(new HashSet<>(queue));
 
             queue.clear();
         }
     }
 
     public void process(Set<String> queue) {
-        Map<String,List<String>> mapResult = new HashMap<>();
+        Map<String, List<String>> mapResult = new HashMap<>();
         logger.info("processing started for shipment");
         try {
-            mapResult = restTemplate.getForObject(new URI(urlUtility.getRequiredUrl(shipmentPath,queue)), Map.class);
+            mapResult = restTemplate.getForObject(new URI(urlUtility.getRequiredUrl(shipmentPath, queue)), Map.class);
             logger.debug("Shipment Result: {}", mapResult);
-            if(!mapResult.isEmpty()){
+            if (!mapResult.isEmpty()) {
                 result.putAll(mapResult);
             }
         } catch (URISyntaxException e) {

@@ -13,7 +13,7 @@ public class UrlUtility {
     @Value("${BASE_URL}")
     private String baseUrl;
 
-    public String getRequiredUrl(String type, Set<String> queue){
+    public String getRequiredUrl(String type, Set<String> queue) {
         StringBuilder builder = new StringBuilder();
         builder.append(baseUrl).append(type);
         builder.append("?q=");

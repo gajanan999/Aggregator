@@ -20,12 +20,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Service
-public class TrackingService implements  ProcessingService{
+public class TrackingService implements ProcessingService {
 
     private static Logger logger = LoggerFactory.getLogger(TrackingService.class);
-
-    @Value("${TRACK_PATH}")
-    private String trackPath;
 
     @Autowired
     RestTemplate restTemplate;
@@ -38,25 +35,29 @@ public class TrackingService implements  ProcessingService{
     ExecutorService executor = Executors.newSingleThreadExecutor();
     boolean notStarted = true;
     Timer timer = new Timer(this);
+
+    @Value("${TRACK_PATH}")
+    private String trackPath;
+
     public void submit(String input) {
         if (notStarted) {
             executor.submit(timer);
             notStarted = false;
         }
         queue.add(input);
-        if(queue.size() == 5)  {
+        if (queue.size() == 5) {
             process(new HashSet<>(queue));
             queue.clear();
         }
     }
 
     public void process(Set<String> queue) {
-        Map<String,String> mapResult = new HashMap<>();
+        Map<String, String> mapResult = new HashMap<>();
         logger.info("processing started for tracking");
         try {
-            mapResult = restTemplate.getForObject(new URI(urlUtility.getRequiredUrl(trackPath,queue)), Map.class);
+            mapResult = restTemplate.getForObject(new URI(urlUtility.getRequiredUrl(trackPath, queue)), Map.class);
             logger.debug("Tracking Result: {}", mapResult);
-            if(!mapResult.isEmpty()){
+            if (!mapResult.isEmpty()) {
                 result.putAll(mapResult);
             }
         } catch (URISyntaxException e) {

@@ -29,7 +29,7 @@ public class TrackingService implements ProcessingService {
 
     //Set<String> queue = new HashSet<>();
     Map<String, String> result = new HashMap<>();
-    Set<String> queue = new HashSet<>();
+    Set<String> queue = new LinkedHashSet<>();
     ExecutorService executor = Executors.newSingleThreadExecutor();
     boolean notStarted = true;
     Timer timer = new Timer(this);
@@ -44,7 +44,7 @@ public class TrackingService implements ProcessingService {
         }
         queue.add(input);
         if (queue.size() == 5) {
-            process(new HashSet<>(queue));
+            process(new LinkedHashSet<>(queue));
             queue.clear();
             timer.reset();
         }

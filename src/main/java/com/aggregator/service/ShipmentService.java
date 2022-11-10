@@ -28,7 +28,7 @@ public class ShipmentService implements ProcessingService {
     //Set<String> queue = new HashSet<>();
 
     Map<String, List<String>> result = new HashMap<>();
-    Set<String> queue = new HashSet<>();
+    Set<String> queue = new LinkedHashSet<>();
 
     Timer timer = new Timer(this);
 
@@ -47,7 +47,7 @@ public class ShipmentService implements ProcessingService {
         queue.add(input);
         if (queue.size() == 5) {
 
-            process(new HashSet<>(queue));
+            process(new LinkedHashSet<>(queue));
             timer.reset();
             queue.clear();
         }

@@ -50,6 +50,10 @@ public class TrackingService implements ProcessingService {
         }
     }
 
+    /**
+     * Requesting the backend service API to fetch the response
+     * @param newQueue
+     */
     public void process(Set<String> newQueue) {
         Map<String, String> mapResult = new HashMap<>();
         logger.info("processing started for tracking");

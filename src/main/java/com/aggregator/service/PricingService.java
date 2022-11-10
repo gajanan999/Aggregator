@@ -24,11 +24,7 @@ public class PricingService implements ProcessingService {
     RestTemplate restTemplate;
     @Autowired
     UrlUtility urlUtility;
-
-
-
     Timer timer = new Timer(this);
-
     ExecutorService executor = Executors.newSingleThreadExecutor();
 
     Map<String, Double> result = new HashMap<>();
@@ -50,10 +46,12 @@ public class PricingService implements ProcessingService {
             executor.submit(timer);
             notStarted = false;
         }
-
     }
 
-
+    /**
+     * Requesting the backend service API to fetch the response
+     * @param newQueue
+     */
     public void process(Set<String> newQueue) {
         logger.info("processing started for pricing");
         Map<String, Double> mapResult = new HashMap<>();

@@ -12,11 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -29,9 +25,10 @@ public class ShipmentService implements ProcessingService {
     @Autowired
     UrlUtility urlUtility;
 
-    Set<String> queue = new HashSet<>();
+    //Set<String> queue = new HashSet<>();
 
     Map<String, List<String>> result = new HashMap<>();
+    Set<String> queue = new HashSet<>();
 
     Timer timer = new Timer(this);
 
@@ -51,17 +48,20 @@ public class ShipmentService implements ProcessingService {
         if (queue.size() == 5) {
 
             process(new HashSet<>(queue));
-
+            timer.reset();
             queue.clear();
         }
     }
 
-    public void process(Set<String> queue) {
+    public void process(Set<String> newQueue) {
         Map<String, List<String>> mapResult = new HashMap<>();
         logger.info("processing started for shipment");
         try {
-            mapResult = restTemplate.getForObject(new URI(urlUtility.getRequiredUrl(shipmentPath, queue)), Map.class);
-            logger.debug("Shipment Result: {}", mapResult);
+            if(!newQueue.isEmpty()) {
+                mapResult = restTemplate.getForObject(new URI(urlUtility.getRequiredUrl(shipmentPath, newQueue)), Map.class);
+                logger.debug("Queue {}, Shipment Result: {}",newQueue,  mapResult);
+            }
+
             if (!mapResult.isEmpty()) {
                 result.putAll(mapResult);
             }
@@ -75,4 +75,15 @@ public class ShipmentService implements ProcessingService {
         return result.get(in);
     }
 
+    public void clearResult(String[] shipList){
+        Arrays.stream(shipList).forEach(ship -> {
+            result.remove(ship);
+        });
+    }
+
+    public Set<String> getQueue() {
+        Set<String> newQueue = new HashSet<>(this.queue);
+        this.queue.clear();
+        return newQueue;
+    }
 }

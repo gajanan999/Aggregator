@@ -9,9 +9,5 @@ public interface ProcessingService {
 
     void process(Set<String> queue);
 
-    default Set<String> getQueue() {
-        Set<String> newQueue = new HashSet<>(queue);
-        queue.clear();
-        return newQueue;
-    }
+    Set<String> getQueue();
 }

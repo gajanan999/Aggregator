@@ -12,10 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -28,11 +25,14 @@ public class PricingService implements ProcessingService {
     @Autowired
     UrlUtility urlUtility;
 
+
+
     Timer timer = new Timer(this);
 
     ExecutorService executor = Executors.newSingleThreadExecutor();
 
     Map<String, Double> result = new HashMap<>();
+    Set<String> queue = new HashSet<>();
 
     boolean notStarted = true;
 
@@ -54,12 +54,15 @@ public class PricingService implements ProcessingService {
     }
 
 
-    public void process(Set<String> queue) {
+    public void process(Set<String> newQueue) {
         logger.info("processing started for pricing");
         Map<String, Double> mapResult = new HashMap<>();
         try {
-            mapResult = restTemplate.getForObject(new URI(urlUtility.getRequiredUrl(pricingPath, queue)), Map.class);
-            logger.debug("Pricing Result: {}", mapResult);
+            if(!newQueue.isEmpty()) {
+                mapResult = restTemplate.getForObject(new URI(urlUtility.getRequiredUrl(pricingPath, newQueue)), Map.class);
+                logger.debug("Queue {}, Pricing Result: {}", newQueue, mapResult);
+            }
+
             if (!mapResult.isEmpty()) {
                 result.putAll(mapResult);
             }
@@ -72,6 +75,18 @@ public class PricingService implements ProcessingService {
 
     public Double getResult(String in) {
         return result.get(in);
+    }
+
+    public void clearResult(String[] priceList){
+        Arrays.stream(priceList).forEach(price -> {
+            result.remove(price);
+        });
+    }
+
+    public Set<String> getQueue() {
+        Set<String> newQueue = new HashSet<>(this.queue);
+        this.queue.clear();
+        return newQueue;
     }
 
 }

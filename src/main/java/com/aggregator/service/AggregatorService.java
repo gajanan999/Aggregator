@@ -81,6 +81,11 @@ public class AggregatorService {
         Arrays.stream(trackList).forEach(track -> {
             trackResult.put(track, trackingService.getResult(track));
         });
+
+        pricingService.clearResult(priceList);
+        trackingService.clearResult(trackList);
+        shipmentService.clearResult(shipList);
+
         finalResult.put("pricing", pricingResult);
         finalResult.put("shipments", shipResult);
         finalResult.put("track", trackResult);

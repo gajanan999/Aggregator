@@ -12,10 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -30,8 +27,9 @@ public class TrackingService implements ProcessingService {
     @Autowired
     UrlUtility urlUtility;
 
-    Set<String> queue = new HashSet<>();
+    //Set<String> queue = new HashSet<>();
     Map<String, String> result = new HashMap<>();
+    Set<String> queue = new HashSet<>();
     ExecutorService executor = Executors.newSingleThreadExecutor();
     boolean notStarted = true;
     Timer timer = new Timer(this);
@@ -48,26 +46,41 @@ public class TrackingService implements ProcessingService {
         if (queue.size() == 5) {
             process(new HashSet<>(queue));
             queue.clear();
+            timer.reset();
         }
     }
 
-    public void process(Set<String> queue) {
+    public void process(Set<String> newQueue) {
         Map<String, String> mapResult = new HashMap<>();
         logger.info("processing started for tracking");
         try {
-            mapResult = restTemplate.getForObject(new URI(urlUtility.getRequiredUrl(trackPath, queue)), Map.class);
-            logger.debug("Tracking Result: {}", mapResult);
+            if(!newQueue.isEmpty()) {
+                mapResult = restTemplate.getForObject(new URI(urlUtility.getRequiredUrl(trackPath, newQueue)), Map.class);
+                logger.debug("Queue {} Tracking Result: {}",newQueue, mapResult);
+            }
+
             if (!mapResult.isEmpty()) {
                 result.putAll(mapResult);
             }
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
-        logger.info("processing done for shipment");
+        logger.info("processing done for Tracking");
     }
 
     public String getResult(String in) {
         return result.get(in);
     }
 
+    public void clearResult(String[] trackList){
+        Arrays.stream(trackList).forEach(track -> {
+            result.remove(track);
+        });
+    }
+
+    public Set<String> getQueue() {
+        Set<String> newQueue = new HashSet<>(this.queue);
+        this.queue.clear();
+        return newQueue;
+    }
 }

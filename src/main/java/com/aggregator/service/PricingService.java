@@ -28,7 +28,7 @@ public class PricingService implements ProcessingService {
     ExecutorService executor = Executors.newSingleThreadExecutor();
 
     Map<String, Double> result = new HashMap<>();
-    Set<String> queue = new HashSet<>();
+    Set<String> queue = new LinkedHashSet<>();
 
     boolean notStarted = true;
 
@@ -38,7 +38,7 @@ public class PricingService implements ProcessingService {
     public void submit(String input) {
         queue.add(input);
         if (queue.size() == 5) {
-            process(new HashSet<>(queue));
+            process(new LinkedHashSet<>(queue));
             timer.reset();
             queue.clear();
         }
@@ -57,11 +57,12 @@ public class PricingService implements ProcessingService {
         Map<String, Double> mapResult = new HashMap<>();
         try {
             if(!newQueue.isEmpty()) {
+                logger.debug("starting query ,Queue {}", newQueue);
                 mapResult = restTemplate.getForObject(new URI(urlUtility.getRequiredUrl(pricingPath, newQueue)), Map.class);
                 logger.debug("Queue {}, Pricing Result: {}", newQueue, mapResult);
             }
 
-            if (!mapResult.isEmpty()) {
+            if (mapResult != null && !mapResult.isEmpty()) {
                 result.putAll(mapResult);
             }
         } catch (URISyntaxException e) {

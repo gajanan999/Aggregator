@@ -9,7 +9,7 @@
     it request the API of xyzassessent service and fetch the result from it 
     
     # API 
-      [http://localhost:8081/api](http://localhost:8081/api/aggregation?pricing=109347263,123456862,109347261,109347251&track=109347263,123456862,109347261,109347251&shipments=109347263,123456862,109347261,109347251)
+      http://localhost:8081/api/aggregation?pricing=109347263,123456862&track=109347263,123456862&shipments=109347263,123456862
 
 
 

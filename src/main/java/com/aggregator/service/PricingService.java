@@ -66,7 +66,16 @@ public class PricingService implements ProcessingService {
                 result.putAll(mapResult);
             }
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            newQueue.forEach(item ->{
+                result.put(item, 0.0);
+            });
+            logger.error(e.getMessage(),e);
+
+        }catch(Exception ex){
+            newQueue.forEach(item ->{
+                result.put(item, 0.0);
+            });
+            logger.error(ex.getMessage(),ex);
         }
         logger.info("processing done for pricing");
 

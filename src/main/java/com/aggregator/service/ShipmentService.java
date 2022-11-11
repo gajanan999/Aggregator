@@ -70,7 +70,15 @@ public class ShipmentService implements ProcessingService {
                 result.putAll(mapResult);
             }
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            newQueue.forEach(item ->{
+                result.put(item, Arrays.asList(""));
+            });
+            logger.error(e.getMessage(),e);
+        }catch(Exception ex){
+            newQueue.forEach(item ->{
+                result.put(item, Arrays.asList(""));
+            });
+            logger.error(ex.getMessage(),ex);
         }
         logger.info("processing done for shipment");
     }

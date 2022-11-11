@@ -15,7 +15,7 @@ public class Timer implements Runnable {
 
     public Timer(ProcessingService processingService) {
         this.processingService = processingService;
-        end = LocalDateTime.now().plusSeconds(15);
+        end = LocalDateTime.now().plusSeconds(5);
     }
 
     @Override
@@ -32,6 +32,6 @@ public class Timer implements Runnable {
     }
 
     public void reset() {
-        end = LocalDateTime.now().plusSeconds(15);
+        end = LocalDateTime.now().plusSeconds(5);
     }
 }

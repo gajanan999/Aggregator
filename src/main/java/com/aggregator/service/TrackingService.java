@@ -63,7 +63,7 @@ public class TrackingService implements ProcessingService {
                 logger.debug("Queue {} Tracking Result: {}",newQueue, mapResult);
             }
 
-            if (!mapResult.isEmpty()) {
+            if (mapResult != null && !mapResult.isEmpty()) {
                 result.putAll(mapResult);
             }
         } catch (URISyntaxException e) {

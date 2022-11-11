@@ -66,7 +66,7 @@ public class ShipmentService implements ProcessingService {
                 logger.debug("Queue {}, Shipment Result: {}",newQueue,  mapResult);
             }
 
-            if (!mapResult.isEmpty()) {
+            if (mapResult != null && !mapResult.isEmpty()) {
                 result.putAll(mapResult);
             }
         } catch (URISyntaxException e) {

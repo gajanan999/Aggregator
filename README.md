@@ -8,10 +8,10 @@
     2. when queue is full i.e queue is size of 5
     it request the API of xyzassessent service and fetch the result from it 
     
-    # API 
+# API 
       http://localhost:8081/api/aggregation?pricing=109347263,123456862&track=109347263,123456862&shipments=109347263,123456862
     
-    ### Queue handling
+### Queue handling
         When first request comes with the parameter two 
         for example: http://localhost:8081/api/aggregation?pricing=109347261,123456862&track=109347261,123456862&shipments=109347261,123456862
         
@@ -35,9 +35,20 @@
         
         after getting all the responses from the backend service. the responses will get combined and then sent back to respective requests.
         
+# Use of postman collection
+   We can use the postman collection for api invoking
+   in which we have added all the backend api example and aggregator service api
+   example
+   ### Shipment API:
+    http://localhost:8080/shipments?q=109347263,123456891
+   ### Pricing API:
+    http://localhost:8080/pricing?q=109347263,123456891,109347264,123456892
+   ### Tracking API:
+    http://localhost:8080/track?q=109347263,123456891
 
-
-
+  ### Aggregator Service API:
+    http://localhost:8081/api/aggregation?pricing=109347263,123456862,109347261&track=109347263,123456862,109347261&shipments=109347263,123456862,109347261
+   This API we can execute multiple number of time. according to the request parameters which we want to send
 
 
 
